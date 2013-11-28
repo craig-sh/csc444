@@ -1,0 +1,242 @@
+#import Parameters
+from sys import argv
+command, filename = argv
+
+#import file 
+input = open(filename)
+print "Here's your file %r:" % filename
+print input.read()
+
+"""
+close -- Closes the file. Like File->Save.. in your editor.
+read -- Reads the contents of the file. You can assign the result to a variable.
+readline -- Reads just one line of a text file.
+truncate -- Empties the file. Watch out if you care about the file.
+write(stuff) -- Writes stuff to the file.
+
+To check if it exists:
+from os.path import exists
+print "Does the output file exist? %r" % exists(to_file)
+"""
+
+#read from user
+name = raw_input("What is your username? ")
+
+#variable
+count = 2 
+
+#print statement
+print "Count: %d" % count
+print "Name: %s" % name
+
+#function
+def print_two_again(arg1, arg2):
+	print "arg1: %r, arg2: %r" % (arg1, arg2)
+	a = 5
+	return a
+
+#if statement 
+if 5 > 2:
+	print "5 is bigger"
+elif 2 > 5:
+	print "2 is greater"
+else:
+	print "lolz" 
+
+	
+next = raw_input("> ")
+ if "0" in next or "1" in next:
+        how_much = int(next)
+else:
+        dead("Man, learn to type a number.")
+
+		
+#arrays
+the_count = [1, 2, 3, 4, 5]
+elements = []
+
+#while loops
+i = 0
+numbers = []
+while i < 6:
+    print "At the top i is %d" % i
+    numbers.append(i)
+
+    i = i + 1
+    print "Numbers now: ", numbers
+    print "At the bottom i is %d" % i
+
+"""
+List Operators: 
+
+.append()
+.split() -> split string into list
+len(x)
+.pop -> removes last item from list 
+'#'.join(x[3.5]) -> element 3 to element 4 with # between them
+[1] -> index 1
+[-1] -> last index
+"""
+
+#for loops
+for number in the_count:
+    print "This is count %d" % number
+# then use the range function to do 0 to 5 counts
+for i in range(0, 6):
+    print "Adding %d to the list." % i
+    # append is a function that lists understand
+    elements.append(i)
+
+#try
+
+def convert_number(s):
+    try:
+        return int(s)
+    except ValueError:
+        return None
+#You put the code you want to "try" inside the try block, 
+#and then you put the code to run for the error inside the 
+#except. In this case, we want to "try" to call int() on something 
+#that might be a number. If that has an error, then we "catch" it 
+#and return None.	
+
+#dictionary
+states = {
+    'Oregon': 'OR',
+    'Florida': 'FL',
+    'California': 'CA',
+    'New York': 'NY',
+    'Michigan': 'MI'
+}
+cities = {
+    'CA': 'San Francisco',
+    'MI': 'Detroit',
+    'FL': 'Jacksonville'
+}
+cities['NY'] = 'New York'
+cities['OR'] = 'Portland'
+
+print "NY State has: ", cities['NY']
+print "OR State has: ", cities['OR']
+
+#classes
+class Parent(object):
+
+    def implicit(self):
+        print "PARENT implicit()"
+
+class Child(Parent):
+    pass #empty block
+
+dad = Parent()
+son = Child()
+
+dad.implicit()
+son.implicit() #outputs Parent implicit
+
+
+class Parent(object):
+
+    def altered(self):
+        print "PARENT altered()"
+"""
+INHERITANCE:
+
+class Child(Parent):
+
+    def altered(self):
+        print "CHILD, BEFORE PARENT altered()"
+        super(Child, self).altered()
+        print "CHILD, AFTER PARENT altered()"
+
+dad = Parent()
+son = Child()
+
+dad.altered()
+son.altered()
+
+Output: 
+
+PARENT altered()
+CHILD, BEFORE PARENT altered()
+PARENT altered()
+CHILD, AFTER PARENT altered()
+"""
+
+"""
+COMPOSITION: 
+
+class Other(object):
+
+    def override(self):
+        print "OTHER override()"
+
+    def implicit(self):
+        print "OTHER implicit()"
+
+    def altered(self):
+        print "OTHER altered()"
+
+class Child(object):
+
+    def __init__(self):
+        self.other = Other()
+
+    def implicit(self):
+        self.other.implicit()
+
+    def override(self):
+        print "CHILD override()"
+
+    def altered(self):
+        print "CHILD, BEFORE OTHER altered()"
+        self.other.altered()
+        print "CHILD, AFTER OTHER altered()"
+
+son = Child()
+
+son.implicit()
+son.override()
+son.altered()
+
+
+Output: 
+OTHER implicit()
+CHILD override()
+CHILD, BEFORE OTHER altered()
+OTHER altered()
+CHILD, AFTER OTHER altered()
+
+"""
+class Song(object):
+
+    def __init__(self, lyrics):
+        self.lyrics = lyrics
+
+    def sing_me_a_song(self):
+        for line in self.lyrics:
+            print line
+
+happy_bday = Song(["Happy birthday to you",
+                   "I don't want to get sued",
+                   "So I'll stop right there"])
+
+happy_bday.sing_me_a_song()
+
+"""
+Class Phrases
+
+class X(Y)
+"Make a class named X that is-a Y."
+class X(object): def __init__(self, J)
+"class X has-a __init__ that takes self and J parameters."
+class X(object): def M(self, J)
+"class X has-a function named M that takes self and J parameters."
+foo = X()
+"Set foo to an instance of class X."
+foo.M(J)
+"From foo get the M function, and call it with parameters self, J."
+foo.K = Q
+"From foo get the K attribute and set it to Q."
+"""
+
