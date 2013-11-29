@@ -7,7 +7,18 @@ import sys, getopt
 
 
 def add(params):
-    print "TODO ADD " + params['filename']
+    #TODO Check if file exists 
+    filename = params['filename']
+    #Make the directory structure for the file
+    my_path = ".scc/"+filename+".info/main/"
+    os.system("mkdir -p " +my_path)
+    #create and write the version file
+    my_file = open(my_path + "version",'w')
+    my_file.write('1 File Added\n')
+    my_file.close()
+    #since this is the time the file is added , copy the whole file as version 1
+    os.system("cp "+filename + " "+my_path+"1")
+
 def branch(params):
     print "TODO Branch " + params['branch']
 def checkin(params):
