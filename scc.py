@@ -4,39 +4,50 @@
 
 import os,sys
 import sys, getopt 
+sys.stderr = sys.stdout
 
+class Command():
+    def __init__(self,params):
+        self.params = params
+                
+    def execute(self,command):
+        #getattr gets a function of this class with name == command
+        getattr(self, command)()
+    def create_file(self,branch,filename):
+        my_path = ".scc/"+filename+".info/"+branch+"/"
+        os.system("mkdir -p " +my_path)
+        #TODO change the version stuff to match Edmunds checkin/checkout funtions
+        my_file = open(my_path + "version",'w')
+        my_file.write('1 File Added\n')
+        my_file.close()
+        #since this is the time the file is added , copy the whole file as version 1
+        os.system("cp "+filename + " "+my_path+"1")
 
-def add(params):
-    #TODO Check if file exists 
-    filename = params['filename']
-    #Make the directory structure for the file
-    my_path = ".scc/"+filename+".info/main/"
-    os.system("mkdir -p " +my_path)
-    #create and write the version file
-    my_file = open(my_path + "version",'w')
-    my_file.write('1 File Added\n')
-    my_file.close()
-    #since this is the time the file is added , copy the whole file as version 1
-    os.system("cp "+filename + " "+my_path+"1")
+    def add(self):
+        #TODO Check if file exists 
+        filename = self.params['filename']
+        self.create_file("main",filename)   
 
-def branch(params):
-    print "TODO Branch " + params['branch']
-def checkin(params):
-    print "TODO checkin " + params['filename'] + " " + params['comment']
-def checkout(params):
-    print "TODO checkout " + params['filename'] + " " + params['version']
-def merge(params):
-    print "TODO merge " + " " +  params['filename'] + " " + params['branch'] +" " + params['to_branch'] 
-def list(params):
-    print "TODO merge " + params['filename']
-def switch(params):
-    print "TODO merge " + params['filename'] +" "+ params['branch']
+    def branch(self):
+        #TODO Check if file exists 
+        branch =  self.params['branch']
+        create_file(branch,filename)   
+    def checkin(self):
+        print "TODO checkin " + self.params['filename'] + " " + self.params['comment']
+    def checkout(self):
+        print "TODO checkout " + self.params['filename'] + " " + self.params['version']
+    def merge(self):
+        print "TODO merge " + " " +  self.params['filename'] + " " + self.params['branch'] +" " + self.params['to_branch'] 
+    def list(self):
+        print "TODO merge " + self.params['filename']
+    def switch(self):
+        print "TODO merge " + self.params['filename'] +" "+ self.params['branch']
 
 def main(argv):
     #remove our command out of the arguments and save it 
     command = argv.pop(0)
     #make sure we have a valid command
-    if not command in ("add","branch","merge","checkin","checkout","list"):
+    if not command in ("add","branch","merge","checkin","checkout","list","switch"):
         sys.exit("Invalid command " + command)
     try:
         opts, args = getopt.getopt(argv,"hf:c:v:b:t:s:",["filename=",
@@ -62,7 +73,8 @@ def main(argv):
             params['to_branch'] = arg 
 
     #call the apporpriate command with the arguments
-    eval(command+"(params)")
+    commandObj = Command(params)      
+    commandObj.execute(command)
 
 if __name__ == "__main__":
-   main(sys.argv[1:])
+    main(sys.argv[1:])
