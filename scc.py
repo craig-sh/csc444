@@ -139,11 +139,6 @@ class Command():
                 print "Error: argument "+arg+" required"
                 sys.exit(1)
             num_args = num_args + 1
-        #make sure no extra arguments were supplied
-        #if num_args !=(len(args[command])):
-        #    print "Error: Too many arguments specified"
-        #    sys.exit(1)
-
 
 
 ###################################################################
@@ -168,26 +163,44 @@ class Command():
         #set the branch of the file to main
         self.write_branch("main")
         
-        print "Added file '" + self.params['filename'] + "' with version 1"
+        print "Added file '" + self.params['filename'] + "' at version 1"
 
     #creates a new branch for the program
     #will terminate program if the file exists
     def branch(self):
-        if(self.branch_exists(self.params['branch'])):
-            print "Error: branch: " + self.params['branch'] + " already created"
+        branch =  self.params['branch'];
+        if(self.branch_exists(branch)):
+            print "Error: branch '%s' already created" % branch
             sys.exit(1)
-        branch =  self.params['branch']
-        create_file(branch)
+        self.create_file(branch)
+        print "Branch '%s' created" % branch
 
     #switches the branch for the file given
     #will terminate if the branch doesn't exist
     def switch(self):
+        filename = self.params['filename']
+        branch = self.params['branch']
         #Check to see if the branch exists 
-        if not branch_exists(self.params['branch']):
-            print "Error: Can't switch to non-existant branch: " + params["branch"]
+        if not self.branch_exists(branch):
+            print "Error: Can't switch to non-existant branch: '%s'" % branch
+            sys.exit(1)
+        #Don't do anyhting if we are already on the branch    
+        if self.get_current_branch(filename) == branch :
+            print "Doing nothing, already on branch '%s'" % branch
+            return
         #update the branch file to switch the branch
         self.write_branch(self.params['branch'])
+        #checkout the most recent version of the file on branch
+        versionData = self.read_version_data(filename, branch)
+        version = versionData[-1]["version"] 
         
+        # Get the content and write it out
+        content = self.reconstruct_version_content(filename, branch, version)
+        
+        curFile = open(filename, 'w')
+        curFile.write(content)
+        curFile.close()
+        print "Switched to branch '%s'" % branch    
     # Checks in the file to the repository
     def checkin(self):
         filename = self.params['filename']
@@ -263,7 +276,7 @@ class Command():
         curFile.close()
         
         print "Checked out version " + str(version) + " of file '" + filename + \
-              "' from branch" + branch + "'"
+              " from branch '" + branch + "'"
     
     def merge(self):
         print "TODO merge " + " " +  self.params['filename'] + " " + self.params['branch'] +" " + self.params['to_branch'] 
