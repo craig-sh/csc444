@@ -11,6 +11,10 @@ import diff_match_patch
 
 sys.stderr = sys.stdout
 
+# Constant defining the number of commits before a full copy
+# of the file is saved (for efficiency)
+full_save_index  = 5
+
 class Command():
     def __init__(self,params):
         self.params = params
@@ -66,23 +70,38 @@ class Command():
     
     # Reconstructs the contents of a file of a given version
     # by applying the patches one at a time
-    def reconstruct_version_content(self,filename,branch,version):
+    def reconstruct_version_content(self,filename,branch,requestedVersion):
+        versionData = self.read_version_data(filename, branch)
+        
+        # Find the last version that contained the full content
+        for versionInfo in reversed(versionData[:requestedVersion]):
+            if versionInfo["isDiff"] == False:
+                lastFullVersion = int(versionInfo["version"])
+                break
+            
         branchPath = ".scc/" + filename + ".info/" + branch + "/"
         
-        # Get the original data
-        initialFile = open(branchPath + "1",'r')
-        contents = initialFile.read();
-        initialFile.close()
-        
-        diff = diff_match_patch.diff_match_patch();
-        
-        # Apply the patches one by one
-        for i in range(2, version + 1):
-            patchFile = open(branchPath + str(i),'r')
-            patch = pickle.load(patchFile)
-            patchFile.close()
+        # Check if the version requested already contains the full content
+        if requestedVersion == lastFullVersion:
+            # Fetch the full content
+            fullFile = open(branchPath + str(lastFullVersion),'r')
+            contents = fullFile.read();
+            fullFile.close()
+        else:
+            # Reconstruct the full content using the diffs
+            initialFile = open(branchPath + str(lastFullVersion),'r')
+            contents = initialFile.read();
+            initialFile.close()
             
-            contents = diff.patch_apply(patch, contents)[0]
+            diff = diff_match_patch.diff_match_patch();
+            
+            # Apply the patches one by one
+            for i in range(lastFullVersion + 1, requestedVersion + 1):
+                patchFile = open(branchPath + str(i),'r')
+                patch = pickle.load(patchFile)
+                patchFile.close()
+                
+                contents = diff.patch_apply(patch, contents)[0]
         
         return contents
            
@@ -94,7 +113,8 @@ class Command():
         my_path = ".scc/"+filename+".info/"+branch+"/"
         os.system("mkdir -p " +my_path)
 
-        versionData = [{ "version": 1, "comment": "First commit", "time": datetime.datetime.now() }]
+        versionData = [{ "version": 1, "comment": "First commit", "time": datetime.datetime.now(),
+                         "isDiff": False }]
         self.write_version_data(filename, branch, versionData)
         
         #since this is the time the file is added , copy the whole file as version 1
@@ -200,7 +220,8 @@ class Command():
         curFile = open(filename, 'w')
         curFile.write(content)
         curFile.close()
-        print "Switched to branch '%s'" % branch    
+        print "Switched to branch '%s'" % branch
+        
     # Checks in the file to the repository
     def checkin(self):
         filename = self.params['filename']
@@ -234,14 +255,26 @@ class Command():
             print "No diffs found, repository already contains latest version"
             return
         
-        # Create the patch file
         branchPath = ".scc/" + filename + ".info/" + branch + "/"
-        patchFile = open(branchPath + str(newVersion), 'w')
-        pickle.dump(patch, patchFile);
-        patchFile.close()
+        contentsFile = open(branchPath + str(newVersion), 'w')
+        
+        # Check whether we should save a full copy or only the diffs
+        if ((newVersion - 1) % full_save_index) == 0:
+            # Save a full copy
+            contentsFile.write(newContent)
+
+            isDiff = False
+        else:
+            # Save the diffs
+            pickle.dump(patch, contentsFile);
+            
+            isDiff = True
+            
+        contentsFile.close()
         
         # Create the new version entry
-        versionEntry = { "version": newVersion, "comment": comment, "time": datetime.datetime.now() }
+        versionEntry = { "version": newVersion, "comment": comment, "time": datetime.datetime.now(),
+                         "isDiff": isDiff }
         versionData.append(versionEntry)
         
         self.write_version_data(filename, branch, versionData)
