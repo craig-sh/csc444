@@ -99,11 +99,19 @@ class Command():
         
         #since this is the time the file is added , copy the whole file as version 1
         os.system("cp "+filename + " "+my_path+"1")
+        
+    # Returns whether the file has been added to the repository before or not
+    def file_in_repository(self, filename):
+        my_path = ".scc/"+filename+".info/"
+        if(os.path.exists(my_path)):
+            return True
+        else:
+            return False
 
     #Branch - Which branch to check for
     #Returns True if the file has been added/branched before
     #False otherwise
-    def file_tracking_exists(self,branch):
+    def branch_exists(self,branch):
         filename = self.params['filename']
         my_path = ".scc/"+filename+".info/"+branch
         if(os.path.exists(my_path)):
@@ -153,7 +161,7 @@ class Command():
     #will terminate program if the file exists
     def add(self):
         #Check if we have info for the file already
-        if(self.file_tracking_exists("main")):
+        if(self.branch_exists("main")):
             print "Error: file: "+self.params['filename'] +" already added"
             sys.exit(1)
         self.create_file("main")
@@ -165,7 +173,7 @@ class Command():
     #creates a new branch for the program
     #will terminate program if the file exists
     def branch(self):
-        if(self.file_tracking_exists(self.params['branch'])):
+        if(self.branch_exists(self.params['branch'])):
             print "Error: branch: " + self.params['branch'] + " already created"
             sys.exit(1)
         branch =  self.params['branch']
@@ -175,7 +183,7 @@ class Command():
     #will terminate if the branch doesn't exist
     def switch(self):
         #Check to see if the branch exists 
-        if not file_tracking_exists(self.params['branch']):
+        if not branch_exists(self.params['branch']):
             print "Error: Can't switch to non-existant branch: " + params["branch"]
         #update the branch file to switch the branch
         self.write_branch(self.params['branch'])
@@ -183,6 +191,12 @@ class Command():
     # Checks in the file to the repository
     def checkin(self):
         filename = self.params['filename']
+
+        # Make sure file exists under source control
+        if not self.file_in_repository(filename):
+            print "Error: file not under source control"
+            return
+        
         branch = self.get_current_branch(filename)
         comment = self.params['comment']
         
@@ -223,6 +237,12 @@ class Command():
         
     def checkout(self):
         filename = self.params['filename']
+
+        # Make sure file exists under source control
+        if not self.file_in_repository(filename):
+            print "Error: file not under source control"
+            return
+        
         branch = self.get_current_branch(filename)
         version = int(self.params['version'])
         
@@ -250,8 +270,14 @@ class Command():
     
     def list(self):
         filename = self.params['filename']
-        branch = self.get_current_branch(filename)
         
+        # Make sure file exists under source control
+        if not self.file_in_repository(filename):
+            print "Error: file not under source control"
+            return
+        
+        branch = self.get_current_branch(filename)
+
         print "Listing versions for '" + filename + "' in branch '" + branch + "'\n"
         
         # Get the version data and print its contents
