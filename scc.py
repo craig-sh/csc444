@@ -63,16 +63,16 @@ class Command():
                 'switch'   : ['filename','branch'],        
                 }
         num_args = 0
-        for arg in args[command]:
+        for  arg in args[command]:
             #make sure the right args are specified
             if not arg in self.params:
                 print "Error: argument "+arg+" required"
                 sys.exit(1)
             num_args = num_args + 1
         #make sure no extra arguments were supplied
-        if num_args !=(len(args[command]) + 1):
-                print "Error: Too many arguments specified"
-                sys.exit(1)
+        #if num_args !=(len(args[command])):
+        #    print "Error: Too many arguments specified"
+        #    sys.exit(1)
 
 
 ###################################################################
@@ -104,7 +104,6 @@ class Command():
         if(self.file_tracking_exists(self.params['branch'])):
             print "Error: branch: " + self.params['branch'] + " already created"
             sys.exit(1)
-        #TODO Check if file exists 
         branch =  self.params['branch']
         create_file(branch)
 
