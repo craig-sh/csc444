@@ -3,7 +3,12 @@
 #run example : ./scc.py add  --filename lol.c
 
 import os,sys
-import sys, getopt 
+import sys, getopt
+import pickle
+import time
+import datetime
+import diff_match_patch
+
 sys.stderr = sys.stdout
 
 class Command():
@@ -23,7 +28,64 @@ class Command():
         my_file = open(my_path + "branch",'w')
         my_file.write(branch)
         my_file.close()
-
+    
+    # Returns the name of the current branch for the given filename
+    def get_current_branch(self, filename):
+        fileDirPath = ".scc/"+filename+".info/"
+        
+        branchFile = open(fileDirPath + "branch",'r')
+        branchName = branchFile.read()
+        branchFile.close()
+        
+        return branchName
+    
+    # Returns the version data consisting of a list of dictionaries
+    # for the given filename and branch
+    def read_version_data(self,filename,branch):
+        branchPath = ".scc/" + filename + ".info/" + branch + "/"
+        
+        versionFile = open(branchPath + "version",'r')
+        data = pickle.load(versionFile)
+        versionFile.close()
+        
+        # Pickle may convert the list to a dict if the list has only
+        # one item, so convert it back to a list if this happens
+        if (type(data) == dict):
+            data = [data]
+        
+        return data
+    
+    # Writes the version data consisting of a list of dictionaries
+    # for the given filename and branch
+    def write_version_data(self,filename,branch,data):
+        branchPath = ".scc/" + filename + ".info/" + branch + "/"
+        
+        versionFile = open(branchPath + "version", 'w')
+        pickle.dump(data, versionFile)
+        versionFile.close()
+    
+    # Reconstructs the contents of a file of a given version
+    # by applying the patches one at a time
+    def reconstruct_version_content(self,filename,branch,version):
+        branchPath = ".scc/" + filename + ".info/" + branch + "/"
+        
+        # Get the original data
+        initialFile = open(branchPath + "1",'r')
+        contents = initialFile.read();
+        initialFile.close()
+        
+        diff = diff_match_patch.diff_match_patch();
+        
+        # Apply the patches one by one
+        for i in range(2, version + 1):
+            patchFile = open(branchPath + str(i),'r')
+            patch = pickle.load(patchFile)
+            patchFile.close()
+            
+            contents = diff.patch_apply(patch, contents)[0]
+        
+        return contents
+           
 
     #branch - which branch the file should be created in
     #Creates the file in the specified branch,and sets its version to 1
@@ -31,10 +93,10 @@ class Command():
         filename = self.params['filename']
         my_path = ".scc/"+filename+".info/"+branch+"/"
         os.system("mkdir -p " +my_path)
-        #TODO change the version stuff to match Edmunds checkin/checkout funtions
-        my_file = open(my_path + "version",'w')
-        my_file.write('1 File Added\n')
-        my_file.close()
+
+        versionData = [{ "version": 1, "comment": "First commit", "time": datetime.datetime.now() }]
+        self.write_version_data(filename, branch, versionData)
+        
         #since this is the time the file is added , copy the whole file as version 1
         os.system("cp "+filename + " "+my_path+"1")
 
@@ -70,7 +132,7 @@ class Command():
                 sys.exit(1)
             num_args = num_args + 1
         #make sure no extra arguments were supplied
-        if num_args !=(len(args[command]) + 1):
+        if num_args !=(len(args[command])):
                 print "Error: Too many arguments specified"
                 sys.exit(1)
 
@@ -96,7 +158,8 @@ class Command():
         self.create_file("main")
         #set the branch of the file to main
         self.write_branch("main")
-
+        
+        print "Added file '" + self.params['filename'] + "' with version 1"
 
     #creates a new branch for the program
     #will terminate program if the file exists
@@ -116,19 +179,88 @@ class Command():
             print "Error: Can't switch to non-existant branch: " + params["branch"]
         #update the branch file to switch the branch
         self.write_branch(self.params['branch'])
-
-
-
-
+        
+    # Checks in the file to the repository
     def checkin(self):
-        print "TODO checkin " + self.params['filename'] + " " + self.params['comment']
+        filename = self.params['filename']
+        branch = self.get_current_branch(filename)
+        comment = self.params['comment']
+        
+        # Get the version data for the file
+        versionData = self.read_version_data(filename, branch)
+        
+        lastVersion = versionData[-1]["version"]
+        newVersion = lastVersion + 1
+        
+        # Compute the diffs between the file in the repository and the current file
+        previousContent = self.reconstruct_version_content(filename, branch, lastVersion)
+        
+        curFile = open(filename, 'r')
+        newContent = curFile.read()
+        curFile.close()
+        
+        diff = diff_match_patch.diff_match_patch()
+        patch = diff.patch_make(previousContent, newContent)
+        
+        # Make sure the files are actually different
+        if not patch:
+            print "No diffs found, repository already contains latest version"
+            return
+        
+        # Create the patch file
+        branchPath = ".scc/" + filename + ".info/" + branch + "/"
+        patchFile = open(branchPath + str(newVersion), 'w')
+        pickle.dump(patch, patchFile);
+        patchFile.close()
+        
+        # Create the new version entry
+        versionEntry = { "version": newVersion, "comment": comment, "time": datetime.datetime.now() }
+        versionData.append(versionEntry)
+        
+        self.write_version_data(filename, branch, versionData)
+        
+        print "Checked in version " + str(newVersion) + " with comment '" + comment + "'"
+        
     def checkout(self):
-        print "TODO checkout " + self.params['filename'] + " " + self.params['version']
+        filename = self.params['filename']
+        branch = self.get_current_branch(filename)
+        version = int(self.params['version'])
+        
+        # Get the latest version
+        versionData = self.read_version_data(filename, branch)
+        lastVersion = versionData[-1]["version"]
+
+        # Make sure version is within bounds
+        if version > lastVersion or version < 1:
+            print "Error: version number is out of bounds"
+            return
+        
+        # Get the content and write it out
+        content = self.reconstruct_version_content(filename, branch, version)
+        
+        curFile = open(filename, 'w')
+        curFile.write(content)
+        curFile.close()
+        
+        print "Checked out version " + str(version) + " of file '" + filename + \
+              "' from branch" + branch + "'"
+    
     def merge(self):
         print "TODO merge " + " " +  self.params['filename'] + " " + self.params['branch'] +" " + self.params['to_branch'] 
+    
     def list(self):
-        print "TODO list " + self.params['filename']
-
+        filename = self.params['filename']
+        branch = self.get_current_branch(filename)
+        
+        print "Listing versions for '" + filename + "' in branch '" + branch + "'\n"
+        
+        # Get the version data and print its contents
+        data = self.read_version_data(filename, branch)
+        for version in data:
+            print "Version " + str(version["version"])
+            print "\tComment: " + version["comment"]
+            print "\tDate: " + version["time"].strftime("%c")
+            print "\n"
 
 def main(argv):
     #remove our command out of the arguments and save it 
