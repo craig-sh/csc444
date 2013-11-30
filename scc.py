@@ -50,6 +50,30 @@ class Command():
             return False
 
 
+    #command - the command for which to check arguments
+    #Retrurns True if the right arguments are supplied for the command
+    #False if incorrect Arguments are supplied,or extra arguments are supplied
+    def check_args(self,command):
+        args = {'add': ['filename'],
+                'checkin'  : ['filename','comment'],
+                'checkout' : ['filename','version'],
+                'list'     : ['filename'],     
+                'branch'   : ['filename','branch'],    
+                'merge'    : ['filename','branch','to_branch'],    
+                'switch'   : ['filename','branch'],        
+                }
+        num_args = 0
+        for arg in args[command]:
+            #make sure the right args are specified
+            if not arg in self.params:
+                print "Error: argument "+arg+" required"
+                sys.exit(1)
+            num_args = num_args + 1
+        #make sure no extra arguments were supplied
+        if num_args !=(len(args[command]) + 1):
+                print "Error: Too many arguments specified"
+                sys.exit(1)
+
 
 ###################################################################
 #               Primary Functions
@@ -61,6 +85,7 @@ class Command():
     def execute(self,command):
         #getattr gets a function of this class with name == command
         getattr(self, command)()
+        
     #adds tracking for the current file at version 1
     #will terminate program if the file exists
     def add(self):
@@ -91,9 +116,6 @@ class Command():
             print "Error: Can't switch to non-existant branch: " + params["branch"]
         #update the branch file to switch the branch
         self.write_branch(self.params['branch'])
-
-
-
 
 
 
@@ -139,6 +161,7 @@ def main(argv):
 
     #call the apporpriate command with the arguments
     commandObj = Command(params)      
+    commandObj.check_args(command)
     commandObj.execute(command)
 
 if __name__ == "__main__":
