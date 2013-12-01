@@ -28,7 +28,7 @@ class Command():
     """branch - Which branch to switch to
     writes the desired branch to a file called branch
     """
-    def write_branch(self,branch):
+    def __write_branch(self,branch):
         filename = self.params['filename']
         my_path = ".scc/"+filename+".info/"
         my_file = open(my_path + "branch",'w')
@@ -37,7 +37,7 @@ class Command():
 
     """ Returns the name of the current branch for the given filename
     """
-    def get_current_branch(self, filename):
+    def __get_current_branch(self, filename):
         fileDirPath = ".scc/"+filename+".info/"
 
         branchFile = open(fileDirPath + "branch",'r')
@@ -49,7 +49,7 @@ class Command():
     """ Returns the version data consisting of a list of dictionaries
     for the given filename and branch
     """
-    def read_version_data(self,filename,branch):
+    def __read_version_data(self,filename,branch):
         branchPath = ".scc/" + filename + ".info/" + branch + "/"
 
         versionFile = open(branchPath + "version",'r')
@@ -67,7 +67,7 @@ class Command():
     """ Writes the version data consisting of a list of dictionaries
     for the given filename and branch
     """
-    def write_version_data(self,filename,branch,data):
+    def __write_version_data(self,filename,branch,data):
         branchPath = ".scc/" + filename + ".info/" + branch + "/"
 
         versionFile = open(branchPath + "version", 'w')
@@ -77,8 +77,8 @@ class Command():
     """ Reconstructs the contents of a file of a given version
     by applying the patches one at a time
     """
-    def reconstruct_version_content(self,filename,branch,requestedVersion):
-        versionData = self.read_version_data(filename, branch)
+    def __reconstruct_version_content(self,filename,branch,requestedVersion):
+        versionData = self.__read_version_data(filename, branch)
 
         # Find the last version that contained the full content
         for versionInfo in reversed(versionData[:requestedVersion]):
@@ -116,21 +116,21 @@ class Command():
     """branch - which branch the file should be created in
     Creates the file in the specified branch,and sets its version to 1
     """
-    def create_file(self,branch):
+    def __create_file(self,branch):
         filename = self.params['filename']
         my_path = ".scc/"+filename+".info/"+branch+"/"
         os.system("mkdir -p " +my_path)
 
         versionData = [{ "version": 1, "comment": "First commit", "time": datetime.datetime.now(),
                          "isDiff": False }]
-        self.write_version_data(filename, branch, versionData)
+        self.__write_version_data(filename, branch, versionData)
 
         #since this is the time the file is added , copy the whole file as version 1
         os.system("cp "+filename + " "+my_path+"1")
 
     """ Returns whether the file has been added to the repository before or not
     """
-    def file_in_repository(self, filename):
+    def __file_in_repository(self, filename):
         my_path = ".scc/"+filename+".info/"
         if(os.path.exists(my_path)):
             return True
@@ -141,7 +141,7 @@ class Command():
     Returns True if the file has been added/branched before
     False otherwise
     """
-    def branch_exists(self,branch):
+    def __branch_exists(self,branch):
         filename = self.params['filename']
         my_path = ".scc/"+filename+".info/"+branch
         if(os.path.exists(my_path)):
@@ -189,12 +189,12 @@ class Command():
     """
     def add(self):
         #Check if we have info for the file already
-        if(self.branch_exists("main")):
+        if(self.__branch_exists("main")):
             print "Error: file: "+self.params['filename'] +" already added"
             sys.exit(1)
-        self.create_file("main")
+        self.__create_file("main")
         #set the branch of the file to main
-        self.write_branch("main")
+        self.__write_branch("main")
         print "Added file '" + self.params['filename'] + "' at version 1"
 
     """creates a new branch for the program
@@ -203,14 +203,14 @@ class Command():
     def branch(self):
         branch =  self.params['branch'];
         filename =  self.params['filename'];
-        if(self.branch_exists(branch)):
+        if(self.__branch_exists(branch)):
             print "Error: branch '%s' already created" % branch
             sys.exit(1)
         # Make sure file exists under source control
-        if not self.file_in_repository(filename):
+        if not self.__file_in_repository(filename):
             print "Error: file: '%s' is not in source code control" % filename
             return
-        self.create_file(branch)
+        self.__create_file(branch)
         print "Branch '%s' created" % branch
 
     """switches the branch for the file given
@@ -220,21 +220,21 @@ class Command():
         filename = self.params['filename']
         branch = self.params['branch']
         #Check to see if the branch exists
-        if not self.branch_exists(branch):
+        if not self.__branch_exists(branch):
             print "Error: Can't switch to non-existant branch: '%s'" % branch
             sys.exit(1)
         #Don't do anyhting if we are already on the branch
-        if self.get_current_branch(filename) == branch :
+        if self.__get_current_branch(filename) == branch :
             print "Doing nothing, already on branch '%s'" % branch
             return
         #update the branch file to switch the branch
-        self.write_branch(self.params['branch'])
+        self.__write_branch(self.params['branch'])
         #checkout the most recent version of the file on branch
-        versionData = self.read_version_data(filename, branch)
+        versionData = self.__read_version_data(filename, branch)
         version = versionData[-1]["version"]
 
         # Get the content and write it out
-        content = self.reconstruct_version_content(filename, branch, version)
+        content = self.__reconstruct_version_content(filename, branch, version)
 
         curFile = open(filename, 'w')
         curFile.write(content)
@@ -247,21 +247,21 @@ class Command():
         filename = self.params['filename']
 
         # Make sure file exists under source control
-        if not self.file_in_repository(filename):
+        if not self.__file_in_repository(filename):
             print "Error: file: '"+filename+"' not under source control"
             return
 
-        branch = self.get_current_branch(filename)
+        branch = self.__get_current_branch(filename)
         comment = self.params['comment']
 
         # Get the version data for the file
-        versionData = self.read_version_data(filename, branch)
+        versionData = self.__read_version_data(filename, branch)
 
         lastVersion = versionData[-1]["version"]
         newVersion = lastVersion + 1
 
         # Compute the diffs between the file in the repository and the current file
-        previousContent = self.reconstruct_version_content(filename, branch, lastVersion)
+        previousContent = self.__reconstruct_version_content(filename, branch, lastVersion)
 
         curFile = open(filename, 'r')
         newContent = curFile.read()
@@ -297,7 +297,7 @@ class Command():
                          "isDiff": isDiff }
         versionData.append(versionEntry)
 
-        self.write_version_data(filename, branch, versionData)
+        self.__write_version_data(filename, branch, versionData)
 
         print "Checked in version " + str(newVersion) + " with comment '" + comment + "'"
 
@@ -308,15 +308,15 @@ class Command():
         filename = self.params['filename']
 
         # Make sure file exists under source control
-        if not self.file_in_repository(filename):
+        if not self.__file_in_repository(filename):
             print "Error: file not under source control"
             return
 
-        branch = self.get_current_branch(filename)
+        branch = self.__get_current_branch(filename)
         version = int(self.params['version'])
 
         # Get the latest version
-        versionData = self.read_version_data(filename, branch)
+        versionData = self.__read_version_data(filename, branch)
         lastVersion = versionData[-1]["version"]
 
         # Make sure version is within bounds
@@ -325,7 +325,7 @@ class Command():
             return
 
         # Get the content and write it out
-        content = self.reconstruct_version_content(filename, branch, version)
+        content = self.__reconstruct_version_content(filename, branch, version)
 
         curFile = open(filename, 'w')
         curFile.write(content)
@@ -347,16 +347,16 @@ class Command():
         filename = self.params['filename']
 
         # Make sure file exists under source control
-        if not self.file_in_repository(filename):
+        if not self.__file_in_repository(filename):
             print "Error: file not under source control"
             return
 
-        branch = self.get_current_branch(filename)
+        branch = self.__get_current_branch(filename)
 
         print "Listing versions for '" + filename + "' in branch '" + branch + "'\n"
 
         # Get the version data and print its contents
-        data = self.read_version_data(filename, branch)
+        data = self.__read_version_data(filename, branch)
         for version in data:
             print "Version " + str(version["version"])
             print "    Comment: " + version["comment"]
