@@ -105,12 +105,12 @@ def main():
     """ Run tests on checkin """
 
     # Test11: Check in file not under source control
-    test_case = "python scc.py checkin -f b.test -c file does not exist"
+    test_case = "python scc.py checkin -f b.test -c 'file does not exist'"
     validate (test_number, test_case)
     test_number += 1
 
     # Test12: Check in file with no changes, i.e. latest version
-    test_case = "python scc.py checkin -f a.test -c version 2"
+    test_case = "python scc.py checkin -f a.test -c 'version 2'"
     validate (test_number, test_case)
     test_number += 1
 
@@ -119,7 +119,7 @@ def main():
     #test = raw_input()
 
     # Test13: Check in file with changes (this is on the new_branch)
-    test_case = "python scc.py checkin -f a.test -c version 2"
+    test_case = "python scc.py checkin -f a.test -c 'version 2'"
     validate (test_number, test_case)
     test_number += 1
 
@@ -158,7 +158,7 @@ def main():
     test_number += 1
 
     # switch to main branch in order to list
-    os.system("python scc.py switch -f a.test -b branch")
+    os.system("python scc.py switch -f a.test -b main")
 
     # Test20: List a file in the main branch (unchanged)
     test_case = "python scc.py list -f a.test"
