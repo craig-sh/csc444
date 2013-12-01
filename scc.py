@@ -361,7 +361,6 @@ class Command():
             print "Version " + str(version["version"])
             print "    Comment: " + version["comment"]
             #print "\tDate: " + version["time"].strftime("%c")
-            print "\n"
 
 def main(argv):
     #remove our command out of the arguments and save it

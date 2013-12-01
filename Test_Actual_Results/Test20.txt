@@ -1,14 +1,4 @@
-Listing versions for 'a.test' in branch 'branch'
+Listing versions for 'a.test' in branch 'main'
 
-Traceback (most recent call last):
-  File "scc.py", line 401, in <module>
-    main(sys.argv[1:])
-  File "scc.py", line 398, in main
-    commandObj.execute(command)
-  File "scc.py", line 185, in execute
-    getattr(self, command)()
-  File "scc.py", line 359, in list
-    data = self.read_version_data(filename, branch)
-  File "scc.py", line 55, in read_version_data
-    versionFile = open(branchPath + "version",'r')
-IOError: [Errno 20] Not a directory: '.scc/a.test.info/branch/version'
+Version 1
+    Comment: First commit
