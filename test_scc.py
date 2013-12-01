@@ -158,7 +158,7 @@ def main():
     test_number += 1
 
     # switch to main branch in order to list
-    os.system("python scc.py switch -f a.test -b main")
+    os.system("python scc.py switch -f a.test -b main > temp.test")
 
     # Test20: List a file in the main branch (unchanged)
     test_case = "python scc.py list -f a.test"

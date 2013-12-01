@@ -14,6 +14,3 @@ Test 17: Failed
 
         Comments: No support yet for checking out the lastest version if no -v flag
 
-Test 19 and 20:
-
-    Needa understand better the I/O

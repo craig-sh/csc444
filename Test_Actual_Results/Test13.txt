@@ -1,1 +1,1 @@
-Checked in version 2 with comment 'version'
+Checked in version 2 with comment 'version 2'

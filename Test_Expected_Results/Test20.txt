@@ -1,4 +1,4 @@
-Listing versions for 'a.test' in branch 'test_branch'
+Listing versions for 'a.test' in branch 'main'
 
 Version 1
     Comment: First commit
