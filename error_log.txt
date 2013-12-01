@@ -1,0 +1,25 @@
+Test 13: Failed
+	Command Run: python scc.py checkin -f a.test -c version 2
+	Expected Results: ["Checked in version 2 with comment 'version 2'\n"]
+	Actual Results: ["Checked in version 2 with comment 'version'\n"]
+
+        Comments: This is an issue with parsing comments with spaces inbetween (sentences)
+
+Test 14: Failed
+	Command Run: python scc.py checkout -f z.test
+	Expected Results: ['Error: file not under source control\n']
+	Actual Results: ['Error: argument version required\n']
+
+        Comments: No support yet for checking out the lastest version if no -v flag
+
+Test 17: Failed
+	Command Run: python scc.py checkout -f a.test
+	Expected Results: ["Checked out version 2 of file 'a.test' from branch 'test_branch'\n"]
+	Actual Results: ['Error: argument version required\n']
+
+        Comments: No support yet for checking out the lastest version if no -v flag
+
+Test 19 and 20:
+
+        Comments: Output issues.. needa look at this further. It does look to me that theres a switch error though.
+                  In test 20 branch should be "main", but it's showing branch "branch".. i.e the name of the metadata file

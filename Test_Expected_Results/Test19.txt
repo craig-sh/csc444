@@ -1,0 +1,7 @@
+Listing versions for 'a.test' in branch 'test_branch'
+
+Version 1
+    Comment: First commit
+
+Version 2
+    Comment: Version 2

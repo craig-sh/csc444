@@ -1,0 +1,1 @@
+Checked out version 2 of file 'a.test' from branch 'test_branch'
