@@ -155,14 +155,15 @@ class Command():
     False if incorrect Arguments are supplied,or extra arguments are supplied
     """
     def check_args(self,command):
-        args = {'add': ['filename'],
-                'checkin'  : ['filename','comment'],
-                'checkout' : ['filename','version'],
-                'checkout' : ['filename'],
-                'list'     : ['filename'],
-                'branch'   : ['filename','branch'],
-                'merge'    : ['filename','branch','to_branch'],
-                'switch'   : ['filename','branch'],
+        args = {'add'           : ['filename'],
+                'checkin'       : ['filename','comment'],
+                'checkout'      : ['filename','version'],
+                'checkout'      : ['filename'],
+                'list'          : ['filename'],
+                'list_branches' : ['filename'],
+                'branch'        : ['filename','branch'],
+                'merge'         : ['filename','branch','to_branch'],
+                'switch'        : ['filename','branch'],
                 }
         num_args = 0
         for  arg in args[command]:
@@ -314,7 +315,7 @@ class Command():
             return
 
         branch = self.__get_current_branch(filename)
-        
+
         # Get the latest version
         versionData = self.__read_version_data(filename, branch)
         lastVersion = versionData[-1]["version"]
@@ -325,7 +326,7 @@ class Command():
         # If it wasn't, use latest version
         else:
             version = lastVersion
-           
+
         # Make sure version is within bounds
         if version > lastVersion or version < 1:
             print "Error: version number is out of bounds"
@@ -417,11 +418,33 @@ class Command():
             print "    Comment: " + version["comment"]
             #print "\tDate: " + version["time"].strftime("%c")
 
+    """ Lists all of the different branches that exist for a file
+    Branch names are the same as the folder names in  the directory
+    containing the metadata for a file
+    """
+    def list_branches(self):
+        filename = self.params['filename']
+
+        # Make sure file exists under source control
+        if not self.__file_in_repository(filename):
+            print "Error: file not under source control"
+            return
+
+        # Set the path to the folder where all the branches are saved
+        path = ".scc/" + filename + ".info/"
+
+        # Print out all of the directory names, i.e. branches
+        #os.system("ls %s -F | grep /") % path
+        #for filename in os.listdir(path):
+        print os.walk(path).next()[1]
+
+
 def main(argv):
     #remove our command out of the arguments and save it
     command = argv.pop(0)
     #make sure we have a valid command
-    if not command in ("add","branch","merge","checkin","checkout","list","switch"):
+    if not command in ("add","branch","merge","checkin", \
+            "checkout","list","switch", "list_branches"):
         sys.exit("Invalid command " + command)
     try:
         opts, args = getopt.getopt(argv,"hf:c:v:b:t:s:",["filename=",

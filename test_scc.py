@@ -167,8 +167,30 @@ def main():
     validate (test_number, test_case)
     test_number += 1
 
-    """ Run tests on merge """
+    """ Run tests on list_branches """
+    
+    # Test21: List all branches for a file that exists 
+    test_case = "python scc.py list_branches -f a.test"
+    validate (test_number, test_case)
+    test_number += 1
 
+    # Test22: List all branches for a file that doesn't exist 
+    test_case = "python scc.py list_branches -f z.test"
+    validate (test_number, test_case)
+    test_number += 1
+    
+    """ Run tests on merge """
+    
+    # Test23: Merge a branch that doesn't exist 
+    test_case = "python scc.py merge -b main -b fake"
+    validate (test_number, test_case)
+    test_number += 1
+
+    # Test24: Merge a branch with a change to a different branch 
+    test_case = "python scc.py merge -b main -b test_branch"
+    validate (test_number, test_case)
+    test_number += 1
+    
     """ Remove test files from main directory """
     os.system("rm *.test")
     os.system("rm -rf .scc")
