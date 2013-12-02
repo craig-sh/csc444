@@ -1,1 +1,2 @@
-Suggestion for merge of test_branch to main in file merge.sugg
+Merged branch main to best resemble update in branch test_branch
+Wrote out suggested merge in a.test.suggested

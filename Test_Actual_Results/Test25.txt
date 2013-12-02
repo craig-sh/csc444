@@ -1,0 +1,1 @@
+Error: Cannot suggest merge on a newly branched file

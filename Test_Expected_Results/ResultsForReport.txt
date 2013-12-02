@@ -1,0 +1,106 @@
+Final Results:
+
+Test 1: Passed
+	Command Run: python scc.py fake_command
+	    Expected Results: ['Invalid command fake_command\n']
+	    Actual Results: ['Invalid command fake_command\n']
+Test 2: Passed
+	Command Run: python scc.py checkin
+	    Expected Results: ['Error: argument filename required\n']
+	    Actual Results: ['Error: argument filename required\n']
+Test 3: Passed
+	Command Run: python scc.py add -f a.test
+	    Expected Results: ["Added file 'a.test' at version 1\n"]
+	    Actual Results: ["Added file 'a.test' at version 1\n"]
+Test 4: Passed
+	Command Run: python scc.py add -f a.test
+	    Expected Results: ['Error: file: a.test already added\n']
+	    Actual Results: ['Error: file: a.test already added\n']
+Test 5: Passed
+	Command Run: python scc.py branch -f a.test -b test_branch
+	    Expected Results: ["Branch 'test_branch' created\n"]
+	    Actual Results: ["Branch 'test_branch' created\n"]
+Test 6: Passed
+	Command Run: python scc.py branch -f a.test -b test_branch
+	    Expected Results: ["Error: branch 'test_branch' already created\n"]
+	    Actual Results: ["Error: branch 'test_branch' already created\n"]
+Test 7: Passed
+	Command Run: python scc.py branch -f z.test -b test_branch2
+	    Expected Results: ["Error: file: 'z.test' is not in source code control\n"]
+	    Actual Results: ["Error: file: 'z.test' is not in source code control\n"]
+Test 8: Passed
+	Command Run: python scc.py switch -f a.test -b test_branch
+	    Expected Results: ["Switched to branch 'test_branch'\n"]
+	    Actual Results: ["Switched to branch 'test_branch'\n"]
+Test 9: Passed
+	Command Run: python scc.py switch -f a.test -b test_branch2
+	    Expected Results: ["Error: Can't switch to non-existant branch: 'test_branch2'\n"]
+	    Actual Results: ["Error: Can't switch to non-existant branch: 'test_branch2'\n"]
+Test 10: Passed
+	Command Run: python scc.py switch -f a.test -b test_branch
+	    Expected Results: ["Doing nothing, already on branch 'test_branch'\n"]
+	    Actual Results: ["Doing nothing, already on branch 'test_branch'\n"]
+Test 11: Passed
+	Command Run: python scc.py checkin -f b.test -c 'file does not exist'
+	    Expected Results: ["Error: file: 'b.test' not under source control\n"]
+	    Actual Results: ["Error: file: 'b.test' not under source control\n"]
+Test 12: Passed
+	Command Run: python scc.py checkin -f a.test -c 'version 2'
+	    Expected Results: ['No diffs found, repository already contains latest version\n']
+	    Actual Results: ['No diffs found, repository already contains latest version\n']
+Test 13: Passed
+	Command Run: python scc.py checkin -f a.test -c 'version 2'
+	    Expected Results: ["Checked in version 2 with comment 'version 2'\n"]
+	    Actual Results: ["Checked in version 2 with comment 'version 2'\n"]
+Test 14: Passed
+	Command Run: python scc.py checkout -f z.test
+	    Expected Results: ['Error: file not under source control\n']
+	    Actual Results: ['Error: file not under source control\n']
+Test 15: Passed
+	Command Run: python scc.py checkout -f a.test -v 3
+	    Expected Results: ['Error: version number is out of bounds\n']
+	    Actual Results: ['Error: version number is out of bounds\n']
+Test 16: Passed
+	Command Run: python scc.py checkout -f a.test -v 1
+	    Expected Results: ["Checked out version 1 of file 'a.test' from branch 'test_branch'\n"]
+	    Actual Results: ["Checked out version 1 of file 'a.test' from branch 'test_branch'\n"]
+Test 17: Passed
+	Command Run: python scc.py checkout -f a.test
+	    Expected Results: ["Checked out version 2 of file 'a.test' from branch 'test_branch'\n"]
+	    Actual Results: ["Checked out version 2 of file 'a.test' from branch 'test_branch'\n"]
+Test 18: Passed
+	Command Run: python scc.py list -f z.test
+	    Expected Results: ['Error: file not under source control\n']
+	    Actual Results: ['Error: file not under source control\n']
+Test 19: Passed
+	Command Run: python scc.py list -f a.test
+	    Expected Results: ["Listing versions for 'a.test' in branch 'test_branch'\n", '\n', 'Version 1\n', '    Comment: First commit\n', 'Version 2\n', '    Comment: version 2\n']
+	    Actual Results: ["Listing versions for 'a.test' in branch 'test_branch'\n", '\n', 'Version 1\n', '    Comment: First commit\n', 'Version 2\n', '    Comment: version 2\n']
+Test 20: Passed
+	Command Run: python scc.py list -f a.test
+	    Expected Results: ["Listing versions for 'a.test' in branch 'main'\n", '\n', 'Version 1\n', '    Comment: First commit\n']
+	    Actual Results: ["Listing versions for 'a.test' in branch 'main'\n", '\n', 'Version 1\n', '    Comment: First commit\n']
+Test 21: Passed
+	Command Run: python scc.py list_branches -f a.test
+	    Expected Results: ["['main', 'test_branch']\n"]
+	    Actual Results: ["['main', 'test_branch']\n"]
+Test 22: Passed
+	Command Run: python scc.py list_branches -f z.test
+	    Expected Results: ['Error: file not under source control\n']
+	    Actual Results: ['Error: file not under source control\n']
+Test 23: Passed
+	Command Run: python scc.py merge -f a.test -b fake -t main
+	    Expected Results: ["Error: Branch 'fake' does not exist\n"]
+	    Actual Results: ["Error: Branch 'fake' does not exist\n"]
+Test 24: Passed
+	Command Run: python scc.py merge -f a.test -b test_branch -t main
+	    Expected Results: ['Merged branch main to best resemble update in branch test_branch\n', 'Wrote out suggested merge in a.test.suggested\n']
+	    Actual Results: ['Merged branch main to best resemble update in branch test_branch\n', 'Wrote out suggested merge in a.test.suggested\n']
+Test 25: Passed
+	Command Run: python scc.py merge -f a.test -b test_branch2 -t main
+	    Expected Results: ['Error: Cannot suggest merge on a newly branched file\n']
+	    Actual Results: ['Error: Cannot suggest merge on a newly branched file\n']
+Test 26: Passed
+	Command Run: python scc.py merge -f a.test -b test_branch2 -t main
+	    Expected Results: ['Merged branch main to best resemble update in branch test_branch2\n', 'Wrote out suggested merge in a.test.suggested\n']
+	    Actual Results: ['Merged branch main to best resemble update in branch test_branch2\n', 'Wrote out suggested merge in a.test.suggested\n']

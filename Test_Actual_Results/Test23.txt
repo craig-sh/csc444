@@ -1,1 +1,1 @@
-Error: argument filename required
+Error: Branch 'fake' does not exist

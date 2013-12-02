@@ -26,8 +26,8 @@ def validate(test_num, test):
     if (expected_results == actual_results):
         print "Test %d: Passed" % test_num
         print "	Command Run: " + test
-        #print "	Expected Results: " + str(expected_results)
-        #print "	Actual Results: " + str(actual_results)
+        print "	    Expected Results: " + str(expected_results)
+        print "	    Actual Results: " + str(actual_results)
 
     else:
         print "Test %d: Failed" % test_num
@@ -168,29 +168,64 @@ def main():
     test_number += 1
 
     """ Run tests on list_branches """
-    
-    # Test21: List all branches for a file that exists 
+
+    # Test21: List all branches for a file that exists
     test_case = "python scc.py list_branches -f a.test"
     validate (test_number, test_case)
     test_number += 1
 
-    # Test22: List all branches for a file that doesn't exist 
+    # Test22: List all branches for a file that doesn't exist
     test_case = "python scc.py list_branches -f z.test"
     validate (test_number, test_case)
     test_number += 1
-    
+
     """ Run tests on merge """
-    
-    # Test23: Merge a branch that doesn't exist 
-    test_case = "python scc.py merge -b main -b fake"
+
+    # Test23: Merge a branch that doesn't exist
+    test_case = "python scc.py merge -f a.test -b fake -t main"
     validate (test_number, test_case)
     test_number += 1
 
-    # Test24: Merge a branch with a change to a different branch 
-    test_case = "python scc.py merge -b main -b test_branch"
+    # Allow time to check output file
+    #test = raw_input()
+
+    # Test24: Merge a branch with a change to a different branch
+    test_case = "python scc.py merge -f a.test -b test_branch -t main"
     validate (test_number, test_case)
     test_number += 1
-    
+
+    # Allow time to check output file
+    #test = raw_input()
+
+    # Create a new branch for next test
+    os.system("python scc.py branch -f a.test -b test_branch2 > temp2.test")
+
+    # Test25: Merge a branch that was just branched, no changes
+    test_case = "python scc.py merge -f a.test -b test_branch2 -t main"
+    validate (test_number, test_case)
+    test_number += 1
+
+    # Allow time to check output file
+    #test = raw_input()
+
+    # Switch to new branch
+    os.system("python scc.py switch -f a.test -b test_branch2 > temp3.test")
+    # Write changes to file a.test before proceeding with next test
+    os.system("echo 'Small Change!' >> a.test")
+    # Checkin the file with changes
+    os.system("python scc.py checkin -f a.test -c 'Rewritten File' > temp4.test")
+    # Write changes to file a.test before proceeding with next test
+    os.system("echo 'I rewrote the file!' > a.test")
+    # Checkin the file with changes
+    os.system("python scc.py checkin -f a.test -c 'Rewritten File' > temp4.test")
+    # Switch back to main before merging
+    os.system("python scc.py switch -f a.test -b main > temp5.test")
+
+    # Test26: Try to merge a completely rewritten file
+    test_case = "python scc.py merge -f a.test -b test_branch2 -t main"
+    validate (test_number, test_case)
+    #test_number += 1
+
     """ Remove test files from main directory """
     os.system("rm *.test")
     os.system("rm -rf .scc")

@@ -1,1 +1,2 @@
-Error: argument filename required
+Merged branch main to best resemble update in branch test_branch
+Wrote out suggested merge in a.test.suggested
