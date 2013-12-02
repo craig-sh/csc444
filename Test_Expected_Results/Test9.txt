@@ -1,1 +1,1 @@
-Error: Can't switch to non-existant branch: 'test_branch2'
+Error: Can't switch to non-existent branch: 'test_branch2'
