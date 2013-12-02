@@ -50,7 +50,7 @@ class diff_match_patch:
     # Cost of an empty edit operation in terms of edit characters.
     self.Diff_EditCost = 4
     # At what point is no match declared (0.0 = perfection, 1.0 = very loose).
-    self.Match_Threshold = 0.5
+    self.Match_Threshold = 0.9
     # How far to search for a match (0 = exact location, 1000+ = broad match).
     # A match this many characters away from the expected location will add
     # 1.0 to the score (0.0 is a perfect match).
@@ -59,7 +59,7 @@ class diff_match_patch:
     # the contents have to be to match the expected contents. (0.0 = perfection,
     # 1.0 = very loose).  Note that Match_Threshold controls how closely the
     # end points of a delete need to match.
-    self.Patch_DeleteThreshold = 0.5
+    self.Patch_DeleteThreshold = 0.9
     # Chunk size for context length.
     self.Patch_Margin = 4
 
