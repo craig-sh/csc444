@@ -345,7 +345,36 @@ class Command():
     Returns an error if no simple merge is possible
     """
     def merge(self):
-        print "TODO merge " + " " +  self.params['filename'] + " " + self.params['branch'] +" " + self.params['to_branch']
+        filename = self.params['filename'] 
+        from_branch = self.params['branch']
+        to_branch = self.params['to_branch']
+        
+        #get the previous and current version file in the source branch
+        version_data = self.__read_version_data(filename, from_branch)
+        curr_version = version_data[-1]["version"]
+        prev_version = curr_version - 1
+
+        #diff the two versions to isolate the last change in a patch
+        prev_content = self.__reconstruct_version_content(filename, from_branch, prev_version)
+        curr_content = self.__reconstruct_version_content(filename, from_branch, curr_version)
+
+        diff =  diff_match_patch.diff_match_patch()
+        patch = diff.patch_make(prev_content, curr_content)
+
+        #get the contents of the file in the to_branch
+        version_data = self.__read_version_data(filename, to_branch)
+        curr_version = version_data[-1]["version"]
+        content = self.__reconstruct_version_content(filename, to_branch, curr_version)
+
+        #patch the file in the latest to branch
+        content = diff.patch_apply(patch, content)[0]
+        #write out the suggested file as filename.suggested
+        suggested_file = open(filename + ".suggested",'w')
+        suggested_file.write(content)
+        suggested_file.close()
+        
+        print "Merged branch %s to best resemble update in branch %s." %( from_branch, to_branch)
+        print "Wrote out suggested merge in %s.suggested" % filename
 
     """ Lists all of the versions (with comments) and time associated with a file
     in the current branch
