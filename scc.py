@@ -158,6 +158,7 @@ class Command():
         args = {'add': ['filename'],
                 'checkin'  : ['filename','comment'],
                 'checkout' : ['filename','version'],
+                'checkout' : ['filename'],
                 'list'     : ['filename'],
                 'branch'   : ['filename','branch'],
                 'merge'    : ['filename','branch','to_branch'],
@@ -313,12 +314,18 @@ class Command():
             return
 
         branch = self.__get_current_branch(filename)
-        version = int(self.params['version'])
-
+        
         # Get the latest version
         versionData = self.__read_version_data(filename, branch)
         lastVersion = versionData[-1]["version"]
 
+        # Check if version was input as parameter
+        if 'version' in self.params:
+            version = int(self.params['version'])
+        # If it wasn't, use latest version
+        else:
+            version = lastVersion
+           
         # Make sure version is within bounds
         if version > lastVersion or version < 1:
             print "Error: version number is out of bounds"

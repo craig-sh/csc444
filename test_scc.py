@@ -26,10 +26,12 @@ def validate(test_num, test):
     if (expected_results == actual_results):
         print "Test %d: Passed" % test_num
         print "	Command Run: " + test
+        #print "	Expected Results: " + str(expected_results)
+        #print "	Actual Results: " + str(actual_results)
 
     else:
         print "Test %d: Failed" % test_num
-	print "	Command Run: " + test
+        print "	Command Run: " + test
         print "	Expected Results: " + str(expected_results)
         print "	Actual Results: " + str(actual_results)
 
