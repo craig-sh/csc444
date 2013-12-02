@@ -1,0 +1,104 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module scc</title>
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>scc</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/ep/Desktop/444/csc444/scc.py">/home/ep/Desktop/444/csc444/scc.py</a></font></td></tr></table>
+    <p><tt>This&nbsp;file&nbsp;implements&nbsp;the&nbsp;source&nbsp;code&nbsp;control&nbsp;system&nbsp;as&nbsp;described&nbsp;in&nbsp;the<br>
+specification&nbsp;and&nbsp;design&nbsp;documents.&nbsp;Documentation&nbsp;for&nbsp;this&nbsp;file&nbsp;can&nbsp;be<br>
+generated&nbsp;using&nbsp;pydoc.&nbsp;This&nbsp;file&nbsp;can&nbsp;be&nbsp;run&nbsp;using&nbsp;the&nbsp;following<br>
+command:<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;./scc.py&nbsp;command&nbsp;&nbsp;-[flag]&nbsp;[parameters]</tt></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="datetime.html">datetime</a><br>
+<a href="diff_match_patch.html">diff_match_patch</a><br>
+</td><td width="25%" valign=top><a href="getopt.html">getopt</a><br>
+<a href="os.html">os</a><br>
+</td><td width="25%" valign=top><a href="pickle.html">pickle</a><br>
+<a href="sys.html">sys</a><br>
+</td><td width="25%" valign=top><a href="time.html">time</a><br>
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><a href="scc.html#Command">Command</a>
+</font></dt></dl>
+ <p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#000000" face="helvetica, arial"><a name="Command">class <strong>Command</strong></a></font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><tt>Class&nbsp;for&nbsp;storing&nbsp;parameters&nbsp;of&nbsp;a&nbsp;command&nbsp;and&nbsp;executing&nbsp;commands<br>&nbsp;</tt></td></tr>
+<tr><td>&nbsp;</td>
+<td width="100%">Methods defined here:<br>
+<dl><dt><a name="Command-__init__"><strong>__init__</strong></a>(self, params)</dt></dl>
+
+<dl><dt><a name="Command-add"><strong>add</strong></a>(self)</dt><dd><tt>Adds&nbsp;tracking&nbsp;for&nbsp;the&nbsp;current&nbsp;file&nbsp;and&nbsp;sets&nbsp;its&nbsp;version&nbsp;to&nbsp;1,<br>
+will&nbsp;terminate&nbsp;if&nbsp;the&nbsp;file&nbsp;is&nbsp;already&nbsp;under&nbsp;source&nbsp;control</tt></dd></dl>
+
+<dl><dt><a name="Command-branch"><strong>branch</strong></a>(self)</dt><dd><tt>Creates&nbsp;a&nbsp;new&nbsp;branch&nbsp;for&nbsp;the&nbsp;specified&nbsp;filename,<br>
+will&nbsp;terminate&nbsp;program&nbsp;if&nbsp;the&nbsp;branch&nbsp;already&nbsp;exists</tt></dd></dl>
+
+<dl><dt><a name="Command-check_args"><strong>check_args</strong></a>(self, command)</dt><dd><tt>Retrurns&nbsp;True&nbsp;if&nbsp;the&nbsp;right&nbsp;arguments&nbsp;are&nbsp;supplied&nbsp;for&nbsp;the&nbsp;command&nbsp;and<br>
+False&nbsp;if&nbsp;incorrect&nbsp;or&nbsp;extra&nbsp;arguments&nbsp;are&nbsp;supplied<br>
+&nbsp;<br>
+command&nbsp;--&nbsp;the&nbsp;command&nbsp;name&nbsp;for&nbsp;which&nbsp;to&nbsp;check&nbsp;arguments</tt></dd></dl>
+
+<dl><dt><a name="Command-checkin"><strong>checkin</strong></a>(self)</dt><dd><tt>Checks&nbsp;in&nbsp;the&nbsp;specified&nbsp;file&nbsp;to&nbsp;the&nbsp;repository</tt></dd></dl>
+
+<dl><dt><a name="Command-checkout"><strong>checkout</strong></a>(self)</dt><dd><tt>Checks&nbsp;a&nbsp;specific&nbsp;version&nbsp;of&nbsp;a&nbsp;file&nbsp;out&nbsp;of&nbsp;the&nbsp;repository,<br>
+if&nbsp;there&nbsp;is&nbsp;no&nbsp;version&nbsp;specified,&nbsp;gets&nbsp;the&nbsp;latest&nbsp;version</tt></dd></dl>
+
+<dl><dt><a name="Command-execute"><strong>execute</strong></a>(self, command)</dt><dd><tt>Runs&nbsp;the&nbsp;command&nbsp;specified<br>
+&nbsp;<br>
+command&nbsp;--&nbsp;name&nbsp;of&nbsp;version&nbsp;control&nbsp;command&nbsp;to&nbsp;execute</tt></dd></dl>
+
+<dl><dt><a name="Command-list"><strong>list</strong></a>(self)</dt><dd><tt>Lists&nbsp;all&nbsp;of&nbsp;the&nbsp;versions&nbsp;(with&nbsp;comments)&nbsp;and&nbsp;time&nbsp;associated&nbsp;with&nbsp;a&nbsp;file<br>
+in&nbsp;the&nbsp;current&nbsp;branch</tt></dd></dl>
+
+<dl><dt><a name="Command-list_branches"><strong>list_branches</strong></a>(self)</dt><dd><tt>Lists&nbsp;all&nbsp;of&nbsp;the&nbsp;different&nbsp;branches&nbsp;that&nbsp;exist&nbsp;for&nbsp;a&nbsp;file<br>
+Branch&nbsp;names&nbsp;are&nbsp;the&nbsp;same&nbsp;as&nbsp;the&nbsp;folder&nbsp;names&nbsp;in&nbsp;the&nbsp;directory<br>
+containing&nbsp;the&nbsp;metadata&nbsp;for&nbsp;a&nbsp;file</tt></dd></dl>
+
+<dl><dt><a name="Command-merge"><strong>merge</strong></a>(self)</dt><dd><tt>Creates&nbsp;a&nbsp;file&nbsp;containing&nbsp;the&nbsp;suggested&nbsp;merge&nbsp;for&nbsp;two&nbsp;different&nbsp;branches.<br>
+Returns&nbsp;an&nbsp;error&nbsp;if&nbsp;no&nbsp;simple&nbsp;merge&nbsp;is&nbsp;possible</tt></dd></dl>
+
+<dl><dt><a name="Command-switch"><strong>switch</strong></a>(self)</dt><dd><tt>Switches&nbsp;the&nbsp;branch&nbsp;for&nbsp;the&nbsp;file&nbsp;given,<br>
+will&nbsp;terminate&nbsp;if&nbsp;the&nbsp;branch&nbsp;doesn't&nbsp;exist</tt></dd></dl>
+
+</td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-main"><strong>main</strong></a>(argv)</dt><dd><tt>Main&nbsp;function&nbsp;of&nbsp;program<br>
+Parses&nbsp;the&nbsp;command&nbsp;line&nbsp;arguments&nbsp;and&nbsp;executes&nbsp;the&nbsp;appropriate&nbsp;command</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>full_save_frequency</strong> = 5</td></tr></table>
+</body></html>
