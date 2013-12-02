@@ -346,7 +346,55 @@ class Command():
     Returns an error if no simple merge is possible
     """
     def merge(self):
-        print "TODO merge " + " " +  self.params['filename'] + " " + self.params['branch'] +" " + self.params['to_branch']
+        filename = self.params['filename'] 
+        from_branch = self.params['branch']
+        to_branch = self.params['to_branch']
+        
+        #make sure both branches exist
+        if not self.__branch_exists(from_branch):
+            print "Branch '%s' does not exist" % from_branch 
+            return
+        if not self.__branch_exists(to_branch):
+            print "Branch '%s' does not exist" % to_branch 
+            return
+
+        #get the previous and current version file in the source branch
+        version_data = self.__read_version_data(filename, from_branch)
+        curr_version = version_data[-1]["version"]
+        prev_version = curr_version - 1
+       
+        #Make sure the branch has an update
+        if prev_version < 1:
+            print "Cannot suggest merge on a newly branched file"
+            return
+
+        #diff the two versions to isolate the last change in a patch
+        prev_content = self.__reconstruct_version_content(filename, from_branch, prev_version)
+        curr_content = self.__reconstruct_version_content(filename, from_branch, curr_version)
+
+        diff =  diff_match_patch.diff_match_patch()
+        patch = diff.patch_make(prev_content, curr_content)
+
+        #get the contents of the file in the to_branch
+        version_data = self.__read_version_data(filename, to_branch)
+        curr_version = version_data[-1]["version"]
+        content = self.__reconstruct_version_content(filename, to_branch, curr_version)
+
+        #patch the file in the latest to branch,and store if it suceeded
+        content,sucessful= diff.patch_apply(patch, content)
+        
+        #Tell the user we couldn't patch if the merge failed
+        if not sucessful[0]:
+            print "Unable to merge branches."
+            return
+
+        #write out the suggested file as filename.suggested
+        suggested_file = open(filename + ".suggested",'w')
+        suggested_file.write(content)
+        suggested_file.close()
+        
+        print "Merged branch %s to best resemble update in branch %s." %( to_branch, from_branch)
+        print "Wrote out suggested merge in %s.suggested" % filename
 
     """ Lists all of the versions (with comments) and time associated with a file
     in the current branch
