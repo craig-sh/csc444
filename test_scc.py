@@ -118,7 +118,6 @@ def main():
 
     # Write changes to file a.test before proceeding with next test
     os.system("echo 'This is a newline' >> a.test")
-    #test = raw_input()
 
     # Test13: Check in file with changes (this is on the new_branch)
     test_case = "python scc.py checkin -f a.test -c 'version 2'"
@@ -186,16 +185,10 @@ def main():
     validate (test_number, test_case)
     test_number += 1
 
-    # Allow time to check output file
-    #test = raw_input()
-
     # Test24: Merge a branch with a change to a different branch
     test_case = "python scc.py merge -f a.test -b test_branch -t main"
     validate (test_number, test_case)
     test_number += 1
-
-    # Allow time to check output file
-    #test = raw_input()
 
     # Create a new branch for next test
     os.system("python scc.py branch -f a.test -b test_branch2 > temp2.test")
@@ -204,9 +197,6 @@ def main():
     test_case = "python scc.py merge -f a.test -b test_branch2 -t main"
     validate (test_number, test_case)
     test_number += 1
-
-    # Allow time to check output file
-    #test = raw_input()
 
     # Switch to new branch
     os.system("python scc.py switch -f a.test -b test_branch2 > temp3.test")
